@@ -470,52 +470,37 @@ ${formatInstruction}
 Kaynak Metin:
 ${extractedText}`;
 
-            const callGemini = async (modelName) => {
+            const callGemini = async () => {
+                const modelName = 'gemini-3-flash';
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    referrerPolicy: "no-referrer",
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { temperature: 0.4, maxOutputTokens: 8192 }
-                    })
-                });
+                
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        referrerPolicy: "no-referrer",
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }],
+                            generationConfig: { temperature: 0.4, maxOutputTokens: 8192 }
+                        })
+                    });
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error(`API Hatası (${modelName}):`, errorData);
-                    return { error: true, status: response.status, data: errorData };
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        const errorMsg = data.error?.message || `API Hatası: ${response.status}`;
+                        alert(`Hata: ${errorMsg}`);
+                        throw new Error(errorMsg);
+                    }
+
+                    return data;
+                } catch (err) {
+                    throw err;
                 }
-                return await response.json();
             };
 
             try {
-                let data = null;
-                const modelsToTry = ['gemini-3-flash'];
-                let lastError = null;
-
-                for (const model of modelsToTry) {
-                    const result = await callGemini(model);
-                    if (result.error) {
-                        lastError = result;
-                        if (result.status === 404) {
-                            console.warn(`${model} bulunamadı, bir sonraki deneniyor...`);
-                            continue;
-                        }
-                        
-                        if (result.status === 401) alert("Hata: API Anahtarı geçersiz. Lütfen anahtarınızı kontrol edin.");
-                        if (result.status === 429) alert("Hata: Kota aşıldı (Too Many Requests). Lütfen bir süre bekleyip tekrar deneyin.");
-                        
-                        throw new Error(result.data.error?.message || `API Hatası: ${result.status}`);
-                    }
-                    data = result;
-                    break;
-                }
-
-                if (!data) {
-                    throw new Error(lastError?.data?.error?.message || "Belirtilen modeller bulunamadı. Lütfen konsolu (F12) kontrol edin.");
-                }
+                const data = await callGemini();
 
                 if (!data || !data.candidates || data.candidates.length === 0) {
                     throw new Error("API yanıtında içerik bulunamadı (Safety filters tetiklenmiş olabilir).");
@@ -577,7 +562,7 @@ ${extractedText}`;
                     bottomDownload.onclick = () => downloadBtn.click();
                     resultsContainer.appendChild(bottomDownload);
                 } else {
-                    resultsContainer.innerHTML = `<div class="prose prose-purple max-w-none text-sm">${text}</div>`;
+                    resultsContainer.innerHTML = `<div class="prose prose-indigo max-w-none text-sm">${text}</div>`;
                 }
                 
                 downloadBtn.classList.remove('hidden');
