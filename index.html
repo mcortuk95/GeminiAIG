@@ -471,7 +471,7 @@ Kaynak Metin:
 ${extractedText}`;
 
             const callGemini = async () => {
-                const modelsToTry = ['gemini-3-flash', 'gemini-3-flash-preview'];
+                const modelsToTry = ['gemini-3-flash-preview', 'gemini-2.0-flash-exp'];
                 let lastError = null;
 
                 for (const modelName of modelsToTry) {
