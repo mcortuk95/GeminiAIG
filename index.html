@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yapay Zeka Soru Hazırlama Uzmanı - Final</title>
+    <title>AIG with Gemini</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,14 +15,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8f7ff; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8faff; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 10px; }
         
         .loader {
             border: 3px solid #f3f3f3;
-            border-top: 3px solid #9333ea;
+            border-top: 3px solid #4f46e5;
             border-radius: 50%;
             width: 20px;
             height: 20px;
@@ -36,35 +36,35 @@
             100% { transform: rotate(360deg); }
         }
 
-        .question-card {
+        .item-card {
             position: relative;
             background: white;
-            border: 1px solid #f3e8ff;
-            border-radius: 1rem;
+            border: 1px solid #e0e7ff;
+            border-radius: 1.5rem;
             padding: 1.5rem;
             margin-bottom: 1rem;
             transition: all 0.2s;
         }
-        .question-card:hover {
-            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.05);
-            border-color: #e9d5ff;
+        .item-card:hover {
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.08);
+            border-color: #c7d2fe;
         }
         .copy-btn {
             position: absolute;
             top: 1rem;
             right: 1rem;
             padding: 0.5rem;
-            background: #f5f3ff;
-            color: #7c3aed;
-            border-radius: 0.5rem;
+            background: #eef2ff;
+            color: #4f46e5;
+            border-radius: 0.75rem;
             opacity: 0;
             transition: opacity 0.2s;
         }
-        .question-card:hover .copy-btn {
+        .item-card:hover .copy-btn {
             opacity: 1;
         }
         .copy-btn:hover {
-            background: #ede9fe;
+            background: #e0e7ff;
         }
         
         /* Hover effects for buttons */
@@ -76,6 +76,10 @@
             transform: translateY(0);
         }
 
+        #generate-btn:hover {
+            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+        }
+
         /* Print styles */
         @media print {
             body { background: white; }
@@ -83,14 +87,14 @@
             main { display: block; padding: 0; margin: 0; max-width: 100%; }
             .lg\:col-span-7 { border: none; box-shadow: none; height: auto !important; overflow: visible !important; width: 100%; }
             #results-container { overflow: visible !important; height: auto !important; padding: 0; }
-            .question-card { border: none; border-bottom: 1px solid #eee; break-inside: avoid; padding: 1rem 0; }
+            .item-card { border: none; border-bottom: 1px solid #eee; break-inside: avoid; padding: 1rem 0; }
         }
 
         .editable-label {
             font-size: 10px;
             font-weight: 700;
-            color: #9333ea;
-            background: #f5f3ff;
+            color: #4f46e5;
+            background: #eef2ff;
             padding: 2px 8px;
             border-radius: 4px;
             text-transform: uppercase;
@@ -102,12 +106,15 @@
 
     <div class="min-h-screen flex flex-col">
         <!-- Header -->
-        <header class="bg-white border-b border-purple-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
+        <header class="bg-white border-b border-indigo-100 px-6 py-4 flex justify-between items-center sticky top-0 z-20 shadow-sm">
             <div class="flex items-center gap-3">
-                <div class="bg-purple-600 p-2 rounded-xl shadow-lg shadow-purple-200 text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+                <div class="bg-indigo-600 p-2 rounded-3xl shadow-lg shadow-indigo-200 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
                 </div>
-                <h1 class="text-xl font-bold text-gray-800">Soru Hazırlama Uzmanı</h1>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800 leading-none">AIG with Gemini</h1>
+                    <p class="text-[10px] text-indigo-500 font-medium mt-1 uppercase tracking-wider">Gemini ile Otomatik Madde Üretimi</p>
+                </div>
             </div>
             <div id="api-status" class="text-sm font-medium">
                 <span class="bg-gray-100 text-gray-500 px-3 py-1 rounded-full flex items-center gap-1.5">
@@ -121,15 +128,15 @@
             <!-- Sol Panel: Ayarlar -->
             <div class="lg:col-span-5 space-y-6">
                 <!-- API Key & Dosya -->
-                <section class="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm space-y-4">
+                <section class="bg-white p-6 rounded-3xl border border-indigo-100 shadow-sm space-y-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Gemini API Key</label>
                         <input type="password" id="api-key" placeholder="API Key'inizi buraya yapıştırın..." 
-                            class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-purple-500 outline-none transition-all text-sm">
+                            class="w-full px-4 py-3 rounded-3xl border border-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all text-sm">
                         
                         <div class="flex items-center justify-between mt-3 px-1">
                             <div class="flex items-center gap-2">
-                                <input type="checkbox" id="remember-me" class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer">
+                                <input type="checkbox" id="remember-me" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500 cursor-pointer">
                                 <label for="remember-me" class="text-xs text-gray-600 cursor-pointer select-none">Bu bilgisayarda hatırla</label>
                             </div>
                             <button id="logout-btn" class="text-[10px] font-bold text-red-500 hover:text-red-700 uppercase tracking-wider hidden">
@@ -140,7 +147,7 @@
 
                     <div class="border-t border-gray-50 pt-4">
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Kaynak Dosya (PDF/TXT)</label>
-                        <div id="drop-zone" class="border-2 border-dashed border-gray-200 p-6 rounded-xl text-center cursor-pointer hover:border-purple-400 hover:bg-purple-50 transition-all">
+                        <div id="drop-zone" class="border-2 border-dashed border-gray-200 p-6 rounded-3xl text-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 transition-all">
                             <input type="file" id="file-input" class="hidden" accept=".pdf,.txt">
                             <div id="file-info" class="text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-2 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
@@ -151,16 +158,16 @@
                 </section>
 
                 <!-- Kriterler -->
-                <section class="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm space-y-5">
+                <section class="bg-white p-6 rounded-3xl border border-indigo-100 shadow-sm space-y-5">
                     <h2 class="font-bold text-gray-700 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-600"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                        Soru Kriterleri
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        Madde Kriterleri
                     </h2>
 
                     <div class="grid grid-cols-1 gap-4">
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Madde Türü</label>
-                            <select id="question-type" class="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 outline-none bg-gray-50/50">
+                            <select id="item-type" class="w-full border border-gray-200 p-3 rounded-3xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50/50">
                                 <option value="multiple_choice">Çoktan Seçmeli</option>
                                 <option value="short_answer">Kısa Yanıt</option>
                                 <option value="true_false">Doğru/Yanlış</option>
@@ -170,7 +177,7 @@
 
                         <div>
                             <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Bilişsel Düzey</label>
-                            <select id="cognitive-level" class="w-full border border-gray-200 p-3 rounded-xl text-sm focus:ring-2 focus:ring-purple-500 outline-none bg-gray-50/50">
+                            <select id="cognitive-level" class="w-full border border-gray-200 p-3 rounded-3xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50/50">
                                 <option value="Bilgi/Kavrama (Hatırlama)">Bilgi/Kavrama (Hatırlama)</option>
                                 <option value="Uygulama (Yeni Duruma Uyarlama)">Uygulama (Yeni Duruma Uyarlama)</option>
                                 <option value="Analiz/Sentez (Derin Çıkarım)">Analiz/Sentez (Derin Çıkarım)</option>
@@ -180,7 +187,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Madde Sayısı</label>
-                                <select id="question-count" class="w-full border border-gray-200 p-3 rounded-xl text-sm bg-gray-50/50">
+                                <select id="item-count" class="w-full border border-gray-200 p-3 rounded-3xl text-sm bg-gray-50/50">
                                     <option value="5">5 Madde</option>
                                     <option value="10" selected>10 Madde</option>
                                     <option value="25">25 Madde</option>
@@ -189,7 +196,7 @@
                             </div>
                             <div id="option-count-container">
                                 <label class="text-xs font-bold text-gray-500 uppercase mb-2 block">Seçenek Sayısı</label>
-                                <select id="option-count" class="w-full border border-gray-200 p-3 rounded-xl text-sm bg-gray-50/50">
+                                <select id="option-count" class="w-full border border-gray-200 p-3 rounded-3xl text-sm bg-gray-50/50">
                                     <option value="3">3 Seçenek</option>
                                     <option value="4" selected>4 Seçenek</option>
                                     <option value="5">5 Seçenek</option>
@@ -199,14 +206,14 @@
                     </div>
                 </section>
 
-                <button id="generate-btn" class="w-full py-4 bg-purple-600 text-white rounded-2xl font-bold shadow-xl shadow-purple-100 hover:bg-purple-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <button id="generate-btn" class="w-full py-4 bg-indigo-600 text-white rounded-3xl font-bold shadow-xl shadow-indigo-100 hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                    Soruları Üret
+                    Maddeleri Üret
                 </button>
             </div>
 
             <!-- Sağ Panel: Sonuçlar -->
-            <div class="lg:col-span-7 bg-white rounded-3xl border border-purple-100 shadow-sm flex flex-col overflow-hidden h-[calc(100vh-160px)]">
+            <div class="lg:col-span-7 bg-white rounded-3xl border border-indigo-100 shadow-sm flex flex-col overflow-hidden h-[calc(100vh-160px)]">
                 <div class="p-6 border-b flex justify-between items-center bg-gray-50/50">
                     <div class="flex flex-col gap-1">
                         <div class="flex items-center gap-2">
@@ -216,11 +223,11 @@
                         <span class="editable-label w-fit">Düzenlenebilir Alan</span>
                     </div>
                     <div class="flex gap-2">
-                        <button id="print-btn" class="hidden text-xs bg-white text-gray-600 px-4 py-2 rounded-xl font-bold hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2">
+                        <button id="print-btn" class="hidden text-xs bg-white text-gray-600 px-4 py-2 rounded-3xl font-bold hover:bg-gray-50 transition-all border border-gray-200 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                             Yazdır / PDF
                         </button>
-                        <button id="download-btn" class="hidden text-xs bg-purple-50 text-purple-600 px-4 py-2 rounded-xl font-bold hover:bg-purple-100 transition-all border border-purple-100 flex items-center gap-2">
+                        <button id="download-btn" class="hidden text-xs bg-indigo-50 text-indigo-600 px-4 py-2 rounded-3xl font-bold hover:bg-indigo-100 transition-all border border-indigo-100 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                             TXT İndir
                         </button>
@@ -229,9 +236,9 @@
                 
                 <div id="results-container" class="flex-1 p-8 overflow-y-auto custom-scrollbar bg-white outline-none" contenteditable="true" style="white-space: pre-wrap;">
                     <div class="h-full flex flex-col items-center justify-center text-center opacity-20">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>
-                        <p class="text-xl font-bold">Henüz Soru Üretilmedi</p>
-                        <p class="text-sm">Dosya yükleyip "Soruları Üret" butonuna basın.</p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="mb-4"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <p class="text-xl font-bold">Üretim İçin İçerik Bekleniyor</p>
+                        <p class="text-sm">Dosya yükleyip "Maddeleri Üret" butonuna basın.</p>
                     </div>
                 </div>
             </div>
@@ -243,12 +250,18 @@
     </div>
 
     <script>
-        // PDF.js worker setup
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
         // State
         let extractedText = "";
         let isGenerating = false;
+        let generationTimer = null;
+        let startTime = 0;
+
+        // PDF.js worker setup - Async loading
+        const initPdfWorker = () => {
+            if (!pdfjsLib.GlobalWorkerOptions.workerSrc) {
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+        };
 
         // DOM Elements
         const apiKeyInput = document.getElementById('api-key');
@@ -257,9 +270,9 @@
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         const fileInfo = document.getElementById('file-info');
-        const questionType = document.getElementById('question-type');
+        const itemType = document.getElementById('item-type');
         const cognitiveLevel = document.getElementById('cognitive-level');
-        const questionCount = document.getElementById('question-count');
+        const itemCount = document.getElementById('item-count');
         const optionCount = document.getElementById('option-count');
         const optionCountContainer = document.getElementById('option-count-container');
         const generateBtn = document.getElementById('generate-btn');
@@ -314,27 +327,29 @@
 
         // Initialize
         loadApiKey();
+        // Initialize PDF worker in background
+        setTimeout(initPdfWorker, 1000);
 
         // Event Listeners
         apiKeyInput.addEventListener('input', saveApiKey);
         rememberMeCheckbox.addEventListener('change', saveApiKey);
         logoutBtn.addEventListener('click', handleLogout);
 
-        questionType.addEventListener('change', (e) => {
+        itemType.addEventListener('change', (e) => {
             optionCountContainer.style.display = e.target.value === 'multiple_choice' ? 'block' : 'none';
         });
 
         dropZone.addEventListener('click', () => fileInput.click());
         dropZone.addEventListener('dragover', (e) => {
             e.preventDefault();
-            dropZone.classList.add('border-purple-400', 'bg-purple-50');
+            dropZone.classList.add('border-indigo-400', 'bg-indigo-50');
         });
         dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('border-purple-400', 'bg-purple-50');
+            dropZone.classList.remove('border-indigo-400', 'bg-indigo-50');
         });
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
-            dropZone.classList.remove('border-purple-400', 'bg-purple-50');
+            dropZone.classList.remove('border-indigo-400', 'bg-indigo-50');
             const file = e.dataTransfer.files[0];
             if (file) handleFile(file);
         });
@@ -344,7 +359,7 @@
             if (file) handleFile(file);
         });
 
-        generateBtn.addEventListener('click', generateQuestions);
+        generateBtn.addEventListener('click', generateItems);
 
         printBtn.addEventListener('click', () => {
             window.print();
@@ -356,7 +371,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `sorular-${Date.now()}.txt`;
+            a.download = `maddeler-${Date.now()}.txt`;
             a.click();
             URL.revokeObjectURL(url);
         });
@@ -381,7 +396,8 @@
         }
 
         async function handleFile(file) {
-            fileInfo.innerHTML = `<div class="loader"></div> <span class="text-sm text-purple-600 font-medium">${file.name} okunuyor...</span>`;
+            initPdfWorker();
+            fileInfo.innerHTML = `<div class="loader"></div> <span class="text-sm text-indigo-600 font-medium">${file.name} okunuyor...</span>`;
             
             try {
                 if (file.type === 'application/pdf') {
@@ -391,7 +407,7 @@
                 }
                 fileInfo.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                    <p class="text-purple-700 font-semibold truncate px-4">${file.name}</p>
+                    <p class="text-indigo-700 font-semibold truncate px-4">${file.name}</p>
                     <p class="text-[10px] text-gray-400">Dosya başarıyla okundu</p>
                 `;
             } catch (err) {
@@ -412,7 +428,22 @@
             return text;
         }
 
-        async function generateQuestions() {
+        function startTimer() {
+            startTime = Date.now();
+            generationTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                generateBtn.innerHTML = `Maddeler Üretiliyor... (${elapsed}s)`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (generationTimer) {
+                clearInterval(generationTimer);
+                generationTimer = null;
+            }
+        }
+
+        async function generateItems() {
             const apiKey = apiKeyInput.value.trim();
             if (!apiKey) return alert("Lütfen API Key girin.");
             if (!extractedText) return alert("Lütfen bir dosya yükleyin.");
@@ -420,10 +451,13 @@
 
             isGenerating = true;
             generateBtn.disabled = true;
-            generateBtn.innerHTML = `<div class="loader"></div> Sorular Üretiliyor...`;
-            resultsContainer.innerHTML = `<div class="h-full flex flex-col items-center justify-center space-y-4">
-                <div class="loader !w-12 !h-12 !border-4"></div>
-                <p class="text-purple-600 font-medium animate-pulse">Yapay Zeka Soruları Hazırlıyor...</p>
+            startTimer();
+            
+            resultsContainer.innerHTML = `<div id="streaming-content" class="space-y-4">
+                <div class="h-full flex flex-col items-center justify-center space-y-4 py-12">
+                    <div class="loader !w-12 !h-12 !border-4"></div>
+                    <p class="text-indigo-600 font-medium animate-pulse">Yapay Zeka Maddeleri Hazırlıyor...</p>
+                </div>
             </div>`;
 
             const typeLabels = {
@@ -434,159 +468,160 @@
             };
 
             let formatInstruction = "";
-            if (questionType.value === 'multiple_choice') {
-                formatInstruction = `Her soru için tam olarak ${optionCount.value} seçenek (1 doğru, ${optionCount.value - 1} çeldirici) oluştur. Seçenekleri A) B) C) şeklinde ver, doğru cevabın yanına * koy.`;
-            } else if (questionType.value === 'true_false') {
+            if (itemType.value === 'multiple_choice') {
+                formatInstruction = `Her madde için tam olarak ${optionCount.value} seçenek (1 doğru, ${optionCount.value - 1} çeldirici) oluştur. Seçenekleri A) B) C) şeklinde ver, doğru cevabın yanına * koy.`;
+            } else if (itemType.value === 'true_false') {
                 formatInstruction = `Sadece bir önerme cümlesi kur ve yanına (D / Y) ekle.`;
-            } else if (questionType.value === 'short_answer') {
-                formatInstruction = `ASLA seçenek verme. Sadece soru kökünü yaz ve altına Cevap: [Doğru Cevap] şeklinde bilgi ekle.`;
-            } else if (questionType.value === 'fill_in_blanks') {
+            } else if (itemType.value === 'short_answer') {
+                formatInstruction = `ASLA seçenek verme. Sadece madde kökünü yaz ve altına Cevap: [Doğru Cevap] şeklinde bilgi ekle.`;
+            } else if (itemType.value === 'fill_in_blanks') {
                 formatInstruction = `Cümle içindeki kritik kelimeyi çıkarıp yerine _______ koy. Doğru kelimeyi parantez içinde belirt.`;
             }
 
             const prompt = `TALİMATLAR:
-1. Sen akademik standartlarda soru üreten bir uzmansın. Sadece pedagojik açıdan kaliteli ve bilimsel sorular üret. 
-2. GİRİŞ VEYA ÇIKIŞ CÜMLESİ KURMAN (Örn: "İşte sorularınız:", "Başarılar dilerim") KESİNLİKLE YASAKTIR. Sadece madde verilerini döndür.
-3. Numaralandırma: Her soruya mutlaka 1, 2, 3... şeklinde numara ver.
+1. Sen akademik standartlarda madde üreten bir uzmansın. Sadece pedagojik açıdan kaliteli ve bilimsel maddeler üret. 
+2. GİRİŞ VEYA ÇIKIŞ CÜMLESİ KURMAN (Örn: "İşte maddeleriniz:", "Başarılar dilerim") KESİNLİKLE YASAKTIR. Sadece madde verilerini döndür.
+3. Numaralandırma: Her maddeye mutlaka 1, 2, 3... şeklinde numara ver.
 4. Çoktan Seçmeli: Seçenekleri A) B) C) D) E) şeklinde her biri yeni satırda olacak şekilde ver. Doğru olan seçeneğin sonuna mutlaka '*' (yıldız) işareti koy.
 5. Doğru/Yanlış: Sadece önermeyi yaz ve yanına (D / Y) ekle.
-6. Kısa Yanıt: ASLA seçenek verme. Sadece soru kökünü yaz ve altına 'Cevap: [Doğru Cevap]' şeklinde bilgi ekle.
+6. Kısa Yanıt: ASLA seçenek verme. Sadece madde kökünü yaz ve altına 'Cevap: [Doğru Cevap]' şeklinde bilgi ekle.
 7. Boşluk Doldurma: Cümle içindeki kritik kelimeyi çıkarıp yerine '_______' koy. Doğru kelimeyi parantez içinde belirt.
-8. Format: Markdown kod blokları (\`\`\`) kullanma. Sorular arasında mutlaka bir boş satır bırak. Çıktı temiz ve düzenli olmalıdır.
+8. Format: Markdown kod blokları (\`\`\`) kullanma. Maddeler arasında mutlaka bir boş satır bırak. Çıktı temiz ve düzenli olmalıdır.
 
 Zorluk Seviyesi: ${cognitiveLevel.value}.
 Bilişsel Düzey: ${cognitiveLevel.value}.
-Madde Türü: ${typeLabels[questionType.value]}.
+Madde Türü: ${typeLabels[itemType.value]}.
 ${formatInstruction}
-Üretilecek Madde Sayısı: ${questionCount.value}.
+Üretilecek Madde Sayısı: ${itemCount.value}.
 
 Kaynak Metin:
 ${extractedText}`;
 
-            const callGemini = async (modelName) => {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+            let fullText = "";
+            const streamingDiv = document.getElementById('streaming-content');
+
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     referrerPolicy: "no-referrer",
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: prompt }] }],
-                        generationConfig: { temperature: 0.7, maxOutputTokens: 8192 }
+                        generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
                     })
                 });
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.error(`API Hatası (${modelName}):`, errorData);
-                    return { error: true, status: response.status, data: errorData };
+                    throw new Error(errorData.error?.message || "API Hatası oluştu.");
                 }
-                return await response.json();
-            };
 
-            try {
-                let data = null;
-                const modelsToTry = ['gemini-3-flash', 'gemini-3-flash-preview'];
-                let lastError = null;
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = "";
 
-                for (const model of modelsToTry) {
-                    const result = await callGemini(model);
-                    if (result.error) {
-                        lastError = result;
-                        if (result.status === 404) {
-                            console.warn(`${model} bulunamadı, bir sonraki deneniyor...`);
-                            continue;
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split("\n");
+                    buffer = lines.pop();
+
+                    for (const line of lines) {
+                        if (line.startsWith("data: ")) {
+                            try {
+                                const jsonStr = line.substring(6);
+                                const data = JSON.parse(jsonStr);
+                                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                                    const newText = data.candidates[0].content.parts[0].text;
+                                    fullText += newText;
+                                    
+                                    // Update UI with partial progress
+                                    streamingDiv.innerHTML = `<div class="prose prose-indigo max-w-none text-sm whitespace-pre-wrap">${fullText}</div>`;
+                                    resultsContainer.scrollTop = resultsContainer.scrollHeight;
+                                }
+                            } catch (e) {
+                                console.warn("Chunk parse error:", e);
+                            }
                         }
-                        
-                        if (result.status === 401) alert("Hata: API Anahtarı geçersiz. Lütfen anahtarınızı kontrol edin.");
-                        if (result.status === 429) alert("Hata: Kota aşıldı (Too Many Requests). Lütfen bir süre bekleyip tekrar deneyin.");
-                        
-                        throw new Error(result.data.error?.message || `API Hatası: ${result.status}`);
                     }
-                    data = result;
-                    break;
                 }
 
-                if (!data) {
-                    throw new Error(lastError?.data?.error?.message || "Belirtilen modeller bulunamadı. Lütfen konsolu (F12) kontrol edin.");
-                }
-
-                if (!data || !data.candidates || data.candidates.length === 0) {
-                    throw new Error("API yanıtında içerik bulunamadı (Safety filters tetiklenmiş olabilir).");
-                }
-
-                const text = data.candidates[0].content.parts[0].text;
-                
-                // Parse text to individual cards
-                const questions = text.split(/\n\s*\n/).filter(q => q.trim().length > 0);
-                
-                if (questions.length > 0) {
-                    resultsContainer.innerHTML = "";
-                    
-                    // Add "Copy All" button at the top
-                    const copyAllBtn = document.createElement('button');
-                    copyAllBtn.className = "w-full mb-6 py-2 bg-purple-50 text-purple-600 rounded-xl font-bold border border-purple-100 hover:bg-purple-100 transition-all flex items-center justify-center gap-2 text-xs no-print";
-                    copyAllBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Tümünü Panoya Kopyala`;
-                    copyAllBtn.onclick = () => {
-                        const allText = questions.map(q => q.trim()).join('\n\n');
-                        navigator.clipboard.writeText(allText);
-                        const originalHTML = copyAllBtn.innerHTML;
-                        copyAllBtn.innerHTML = "Kopyalandı!";
-                        setTimeout(() => copyAllBtn.innerHTML = originalHTML, 2000);
-                    };
-                    resultsContainer.appendChild(copyAllBtn);
-
-                    questions.forEach((qText, index) => {
-                        const card = document.createElement('div');
-                        card.className = "question-card group";
-                        card.style.whiteSpace = "pre-wrap";
-                        
-                        const content = document.createElement('div');
-                        content.className = "text-sm text-gray-800 leading-relaxed";
-                        content.innerText = qText.trim();
-                        
-                        const copyBtn = document.createElement('button');
-                        copyBtn.className = "copy-btn";
-                        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
-                        copyBtn.title = "Soruyu Kopyala";
-                        
-                        copyBtn.onclick = () => {
-                            const cleanText = qText.trim();
-                            navigator.clipboard.writeText(cleanText);
-                            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="M20 6 9 17l-5-5"/></svg>`;
-                            setTimeout(() => {
-                                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
-                            }, 2000);
-                        };
-                        
-                        card.appendChild(content);
-                        card.appendChild(copyBtn);
-                        resultsContainer.appendChild(card);
-                    });
-
-                    // Add bottom download button
-                    const bottomDownload = document.createElement('button');
-                    bottomDownload.className = "w-full mt-4 py-3 bg-gray-50 text-gray-600 rounded-xl font-bold border border-dashed border-gray-200 hover:bg-gray-100 transition-all flex items-center justify-center gap-2 text-sm";
-                    bottomDownload.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Tüm Soruları TXT Olarak İndir`;
-                    bottomDownload.onclick = () => downloadBtn.click();
-                    resultsContainer.appendChild(bottomDownload);
-                } else {
-                    resultsContainer.innerHTML = `<div class="prose prose-purple max-w-none text-sm">${text}</div>`;
-                }
+                // Final processing to create cards
+                renderFinalItems(fullText);
                 
                 downloadBtn.classList.remove('hidden');
                 printBtn.classList.remove('hidden');
             } catch (err) {
-                console.error("Soru Üretme Hatası:", err);
+                console.error("Madde Üretme Hatası:", err);
                 resultsContainer.innerHTML = `<div class="h-full flex flex-col items-center justify-center text-red-500 p-8 text-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-4 mx-auto"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                     <p class="font-bold">Hata Oluştu!</p>
                     <p class="text-xs mt-2">${err.message}</p>
-                    <p class="text-[10px] text-red-400 mt-2 italic">Not: Detaylı hata raporu için tarayıcı konsoluna (F12) bakabilirsiniz.</p>
                 </div>`;
             } finally {
                 isGenerating = false;
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg> Soruları Üret`;
+                stopTimer();
+                generateBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg> Maddeleri Üret`;
+            }
+        }
+
+        function renderFinalItems(text) {
+            const items = text.split(/\n\s*\n/).filter(q => q.trim().length > 0);
+            
+            if (items.length > 0) {
+                resultsContainer.innerHTML = "";
+                
+                // Add "Copy All" button
+                const copyAllBtn = document.createElement('button');
+                copyAllBtn.className = "w-full mb-6 py-2 bg-indigo-50 text-indigo-600 rounded-3xl font-bold border border-indigo-100 hover:bg-indigo-100 transition-all flex items-center justify-center gap-2 text-xs no-print";
+                copyAllBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg> Tümünü Panoya Kopyala`;
+                copyAllBtn.onclick = () => {
+                    const allText = items.map(q => q.trim()).join('\n\n');
+                    navigator.clipboard.writeText(allText);
+                    const originalHTML = copyAllBtn.innerHTML;
+                    copyAllBtn.innerHTML = "Kopyalandı!";
+                    setTimeout(() => copyAllBtn.innerHTML = originalHTML, 2000);
+                };
+                resultsContainer.appendChild(copyAllBtn);
+
+                items.forEach((qText) => {
+                    const card = document.createElement('div');
+                    card.className = "item-card group";
+                    card.style.whiteSpace = "pre-wrap";
+                    
+                    const content = document.createElement('div');
+                    content.className = "text-sm text-gray-800 leading-relaxed";
+                    content.innerText = qText.trim();
+                    
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = "copy-btn";
+                    copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
+                    copyBtn.title = "Maddeyi Kopyala";
+                    
+                    copyBtn.onclick = () => {
+                        navigator.clipboard.writeText(qText.trim());
+                        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><path d="M20 6 9 17l-5-5"/></svg>`;
+                        setTimeout(() => {
+                            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
+                        }, 2000);
+                    };
+                    
+                    card.appendChild(content);
+                    card.appendChild(copyBtn);
+                    resultsContainer.appendChild(card);
+                });
+
+                const bottomDownload = document.createElement('button');
+                bottomDownload.className = "w-full mt-4 py-3 bg-gray-50 text-gray-600 rounded-3xl font-bold border border-dashed border-gray-200 hover:bg-gray-100 transition-all flex items-center justify-center gap-2 text-sm";
+                bottomDownload.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg> Tüm Maddeleri TXT Olarak İndir`;
+                bottomDownload.onclick = () => downloadBtn.click();
+                resultsContainer.appendChild(bottomDownload);
+            } else {
+                resultsContainer.innerHTML = `<div class="prose prose-indigo max-w-none text-sm whitespace-pre-wrap">${text}</div>`;
             }
         }
     </script>
