@@ -67,6 +67,7 @@
             background: #ede9fe;
         }
         
+        /* Hover effects for buttons */
         button:hover {
             filter: brightness(1.05);
             transform: translateY(-1px);
@@ -75,6 +76,7 @@
             transform: translateY(0);
         }
 
+        /* Print styles */
         @media print {
             body { background: white; }
             header, .lg\:col-span-5, footer, .no-print, #download-btn, #print-btn, .copy-btn, #api-status { display: none !important; }
@@ -461,8 +463,8 @@ ${formatInstruction}
 Kaynak Metin:
 ${extractedText}`;
 
-            const callGemini = async () => {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+            const callGemini = async (modelName) => {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -475,25 +477,38 @@ ${extractedText}`;
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.error('API Hatası Detayı:', errorData);
-                    
-                    if (response.status === 401) {
-                        alert("Hata: API Anahtarı geçersiz. Lütfen anahtarınızı kontrol edin.");
-                        throw new Error("INVALID_API_KEY");
-                    }
-                    if (response.status === 429) {
-                        alert("Hata: Kota aşıldı (Too Many Requests). Lütfen bir süre bekleyip tekrar deneyin.");
-                        throw new Error("QUOTA_EXCEEDED");
-                    }
-                    console.error('İstek atılan URL: ', url.replace(apiKey, "GIZLI"));
-                    alert("Hata: " + (errorData.error?.message || "Bilinmeyen bir hata oluştu."));
-                    throw new Error(errorData.error?.message || `API Hatası: ${response.status}`);
+                    console.error(`API Hatası (${modelName}):`, errorData);
+                    return { error: true, status: response.status, data: errorData };
                 }
                 return await response.json();
             };
 
             try {
-                const data = await callGemini();
+                let data = null;
+                const modelsToTry = ['gemini-3-flash', 'gemini-3-flash-preview'];
+                let lastError = null;
+
+                for (const model of modelsToTry) {
+                    const result = await callGemini(model);
+                    if (result.error) {
+                        lastError = result;
+                        if (result.status === 404) {
+                            console.warn(`${model} bulunamadı, bir sonraki deneniyor...`);
+                            continue;
+                        }
+                        
+                        if (result.status === 401) alert("Hata: API Anahtarı geçersiz. Lütfen anahtarınızı kontrol edin.");
+                        if (result.status === 429) alert("Hata: Kota aşıldı (Too Many Requests). Lütfen bir süre bekleyip tekrar deneyin.");
+                        
+                        throw new Error(result.data.error?.message || `API Hatası: ${result.status}`);
+                    }
+                    data = result;
+                    break;
+                }
+
+                if (!data) {
+                    throw new Error(lastError?.data?.error?.message || "Belirtilen modeller bulunamadı. Lütfen konsolu (F12) kontrol edin.");
+                }
 
                 if (!data || !data.candidates || data.candidates.length === 0) {
                     throw new Error("API yanıtında içerik bulunamadı (Safety filters tetiklenmiş olabilir).");
