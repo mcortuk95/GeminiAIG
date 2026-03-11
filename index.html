@@ -471,32 +471,50 @@ Kaynak Metin:
 ${extractedText}`;
 
             const callGemini = async () => {
-                const modelName = 'gemini-3-flash';
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-                
-                try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        referrerPolicy: "no-referrer",
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }],
-                            generationConfig: { temperature: 0.4, maxOutputTokens: 8192 }
-                        })
-                    });
+                const modelsToTry = ['gemini-3-flash', 'gemini-3-flash-preview'];
+                let lastError = null;
 
-                    const data = await response.json();
+                for (const modelName of modelsToTry) {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+                    
+                    try {
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            referrerPolicy: "no-referrer",
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }],
+                                generationConfig: { temperature: 0.4, maxOutputTokens: 8192 }
+                            })
+                        });
 
-                    if (!response.ok) {
-                        const errorMsg = data.error?.message || `API Hatası: ${response.status}`;
-                        alert(`Hata: ${errorMsg}`);
-                        throw new Error(errorMsg);
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            console.error(`Model denemesi başarısız (${modelName}):`, data);
+                            lastError = data.error?.message || `API Hatası: ${response.status}`;
+                            
+                            // Eğer model bulunamadıysa (404), bir sonrakini dene
+                            if (response.status === 404) {
+                                continue;
+                            }
+                            
+                            // Diğer hatalarda (401, 429 vb.) doğrudan hata fırlat
+                            alert(`Hata: ${lastError}`);
+                            throw new Error(lastError);
+                        }
+
+                        return data;
+                    } catch (err) {
+                        if (err.message && err.message.includes('API Hatası')) throw err;
+                        console.error(`Ağ hatası veya beklenmedik hata (${modelName}):`, err);
+                        lastError = err.message;
                     }
-
-                    return data;
-                } catch (err) {
-                    throw err;
                 }
+
+                // Tüm modeller denendi ve başarısız olduysa
+                alert(`Hata: ${lastError}\nLütfen konsolu (F12) kontrol edin.`);
+                throw new Error(lastError);
             };
 
             try {
