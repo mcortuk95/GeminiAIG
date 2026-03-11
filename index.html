@@ -475,7 +475,7 @@ ${extractedText}`;
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.log('Hata Yanıtı:', errorData);
+                    console.error('API Hatası Detayı:', errorData);
                     
                     if (response.status === 401) {
                         alert("Hata: API Anahtarı geçersiz. Lütfen anahtarınızı kontrol edin.");
@@ -486,7 +486,6 @@ ${extractedText}`;
                         throw new Error("QUOTA_EXCEEDED");
                     }
                     console.error('İstek atılan URL: ', url.replace(apiKey, "GIZLI"));
-                    console.error('Hata Detayı:', errorData);
                     alert("Hata: " + (errorData.error?.message || "Bilinmeyen bir hata oluştu."));
                     throw new Error(errorData.error?.message || `API Hatası: ${response.status}`);
                 }
